@@ -26,11 +26,22 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run tests and generate HTML report
-        run: pytest -v --html=report.html --self-contained-html
+      - name: Run tests with Allure
+        run: pytest -v --alluredir=allure-results
 
-      - name: Upload HTML report
+      - name: Upload Allure results
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-report
-          path: report.html
+          name: allure-results
+          path: allure-results
+
+      - name: Generate Allure Report
+        run: |
+          pip install allure-python-commons
+          allure generate allure-results -o allure-report --clean
+
+      - name: Upload Allure HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
